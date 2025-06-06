@@ -63,9 +63,10 @@ Performance targets: < 0.1ms overhead per request, > 50k req/s single core.
 **IMPORTANT**: When implementing features or fixes, you MUST:
 
 1. **Follow TODO.md roadmap**: All development should align with the priorities and specifications outlined in TODO.md
-2. **Check off completed items**: After successfully implementing any feature from TODO.md, mark the corresponding checkbox as `[x]` to track progress
-3. **Maintain architectural principles**: Ensure all changes preserve the ultra-lightweight, modular, and performance-first approach
-4. **Run tests after changes**: Always execute `asdf exec bundle exec rake spec` to verify implementations don't break existing functionality
-5. **Update documentation**: When adding new features, update relevant sections in this file and ensure examples remain current
+2. **Work on ONE sub-task at a time**: Focus on completing a single checkbox item from TODO.md before moving to the next. Each section (e.g., 1.1, 1.2) contains multiple sub-tasks - complete them sequentially, not all at once
+3. **Check off completed items**: After successfully implementing any feature from TODO.md, mark the corresponding checkbox as `[x]` to track progress
+4. **Maintain architectural principles**: Ensure all changes preserve the ultra-lightweight, modular, and performance-first approach
+5. **Run tests after changes**: Always execute `asdf exec bundle exec rake spec` to verify implementations don't break existing functionality
+6. **Update documentation**: When adding new features, update relevant sections in this file and ensure examples remain current
 
-Before starting any implementation, review the relevant section in TODO.md to understand the full scope and requirements.
+Before starting any implementation, review the relevant section in TODO.md to understand the full scope and requirements. Complete each sub-task fully (including tests) before proceeding to the next.
