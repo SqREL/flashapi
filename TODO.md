@@ -67,6 +67,22 @@
 - [ ] Development vs production error details
 - [ ] Error serialization hooks
 
+### 2.5 Security Module (`flashapi/security`)
+- [ ] Input sanitization and validation
+- [ ] SQL injection prevention helpers
+- [ ] Security headers middleware (HSTS, CSP, etc.)
+- [ ] Request size limiting
+- [ ] Path traversal protection
+- [ ] XSS prevention utilities
+
+### 2.6 Monitoring & Observability (`flashapi/monitoring`)
+- [ ] APM integration hooks (New Relic, DataDog)
+- [ ] Metrics collection interface
+- [ ] Health check endpoint support
+- [ ] Request tracing integration
+- [ ] Performance monitoring hooks
+- [ ] Custom metrics DSL
+
 ## 3. Adapter Improvements
 
 ### 3.1 EventMachine Adapter
@@ -162,6 +178,14 @@
 - [ ] Security scanning
 - [ ] Dependency auditing
 
+### 7.3 CI/CD Pipeline
+- [ ] Automated testing across Ruby versions (2.7+)
+- [ ] Performance regression detection
+- [ ] Automated gem releases
+- [ ] Security vulnerability scanning
+- [ ] Code coverage reporting
+- [ ] Multi-platform testing (Linux, macOS, Windows)
+
 ## 8. Community
 
 ### 8.1 Ecosystem
@@ -189,12 +213,15 @@
    - Async adapter
    - Benchmarking suite
    - Memory optimizations
+   - Security module
+   - Monitoring & observability
 
 3. **Phase 3 - Developer Experience** (Adoption focus)
    - Testing utilities
    - Documentation
    - Error handling
    - Development tools
+   - CI/CD pipeline
 
 4. **Phase 4 - Ecosystem** (Growth focus)
    - Separate gem packages
