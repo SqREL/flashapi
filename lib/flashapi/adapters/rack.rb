@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require 'rack'
+require_relative '../object_pool'
 
 module FlashAPI
   module Adapters
-    # Rack adapter for FlashAPI framework
+    # Rack adapter for FlashAPI framework with object pooling optimizations
     class Rack < Base
+      # Class-level pools shared across all instances
+      RACK_REQUEST_POOL = RackRequestPool.new(size: 100)
+      BASE_REQUEST_POOL = BaseRequestPool.new(size: 100)
       def self.build_app(app, **options)
         new(app, **options)
       end
@@ -14,7 +18,14 @@ module FlashAPI
         request = build_request(env)
         response = handle_request(request)
         
-        [response[:status], response[:headers], [response[:body]]]
+        body = response[:body]
+        
+        # Check if body is streamable (responds to each)
+        if body.respond_to?(:each) && !body.is_a?(String)
+          [response[:status], response[:headers], body]
+        else
+          [response[:status], response[:headers], [body]]
+        end
       end
 
       def start
@@ -42,6 +53,37 @@ module FlashAPI
       end
 
       def build_request(env)
+        if use_pooling?
+          build_pooled_request(env)
+        else
+          build_standard_request(env)
+        end
+      end
+
+      private
+
+      def use_pooling?
+        options.fetch(:use_pooling, true)
+      end
+
+      def build_pooled_request(env)
+        RACK_REQUEST_POOL.with_request(env) do |rack_request|
+          BASE_REQUEST_POOL.build_request do |builder|
+            builder
+              .set(:protocol, rack_request.scheme)
+              .set(:request_method, rack_request.request_method)
+              .set(:cookie, rack_request.cookies)
+              .set(:content_type, rack_request.content_type)
+              .set(:path_info, rack_request.path_info)
+              .set(:uri, rack_request.path_info)
+              .set(:query_string, rack_request.query_string)
+              .set(:post_content, read_body(rack_request))
+              .set(:headers, extract_headers(env))
+          end
+        end
+      end
+
+      def build_standard_request(env)
         rack_request = ::Rack::Request.new(env)
         
         BaseRequest.new(
@@ -65,15 +107,26 @@ module FlashAPI
         body
       end
 
+      # Frozen string constants for header optimization
+      HTTP_PREFIX = 'HTTP_'
+      UNDERSCORE = '_'
+      DASH = '-'
+      CONTENT_HEADERS = %w[CONTENT_TYPE CONTENT_LENGTH].freeze
+
       def extract_headers(env)
-        env.each_with_object({}) do |(key, value), headers|
-          if key.start_with?('HTTP_')
-            header_name = key[5..].split('_').map(&:capitalize).join('-')
+        headers = {}
+        
+        env.each do |key, value|
+          if key.start_with?(HTTP_PREFIX)
+            # Use frozen strings and avoid intermediate arrays
+            header_name = key[5..].tr(UNDERSCORE, DASH).split(DASH).map(&:capitalize).join(DASH)
             headers[header_name] = value
-          elsif %w[CONTENT_TYPE CONTENT_LENGTH].include?(key)
-            headers[key.split('_').map(&:capitalize).join('-')] = value
+          elsif CONTENT_HEADERS.include?(key)
+            headers[key.tr(UNDERSCORE, DASH).split(DASH).map(&:capitalize).join(DASH)] = value
           end
         end
+        
+        headers
       end
     end
 

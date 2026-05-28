@@ -3,6 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe FlashAPI::Application do
+  after(:each) do
+    # Clear cache after each test to avoid state leakage
+    FlashAPI::Application.clear_cache!
+  end
   let(:request) { instance_double(FlashAPI::BaseRequest, uri: '/users', request_method: 'GET') }
   
   describe '.run' do
@@ -260,6 +264,84 @@ RSpec.describe FlashAPI::Application do
       it 'raises NoRouteMatch' do
         expect { described_class.run(request, app_module) }.to raise_error(FlashAPI::NoRouteMatch)
       end
+    end
+  end
+  
+  describe 'route caching' do
+    let(:app_module) do
+      Module.new do
+        def self.name
+          'TestApp'
+        end
+        
+        const_set(:Routes, Module.new do
+          def self.paths
+            @paths ||= {
+              'GET /cached' => { method: 'get', responder: 'CachedResponder', path: '/cached' }
+            }
+          end
+          
+          def self.routes_for_path(path)
+            paths.keys.select { |key| key.end_with?(" #{path}") }
+          end
+        end)
+        
+        const_set(:CachedResponder, Class.new)
+      end
+    end
+    
+    it 'caches successful route lookups' do
+      request = instance_double(FlashAPI::BaseRequest, uri: '/cached', request_method: 'GET')
+      
+      # First call should populate cache
+      result1 = described_class.run(request, app_module)
+      
+      # Verify route paths is called only once
+      expect(app_module::Routes).to receive(:paths).never
+      
+      # Second call should use cache
+      result2 = described_class.run(request, app_module)
+      
+      expect(result1).to eq(result2)
+    end
+    
+    it 'caches responder lookups' do
+      request = instance_double(FlashAPI::BaseRequest, uri: '/cached', request_method: 'GET')
+      
+      # First call
+      described_class.run(request, app_module)
+      
+      # Verify const_get is not called again
+      expect(app_module).to receive(:const_get).never
+      
+      # Second call should use cached responder
+      described_class.run(request, app_module)
+    end
+    
+    it 'uses different cache keys for different scopes' do
+      request = instance_double(FlashAPI::BaseRequest, uri: '/cached', request_method: 'GET')
+      
+      # Create another module with same routes
+      another_module = Module.new do
+        def self.name
+          'AnotherApp'
+        end
+        
+        const_set(:Routes, Module.new do
+          def self.paths
+            {
+              'GET /cached' => { method: 'get', responder: 'DifferentResponder', path: '/cached' }
+            }
+          end
+        end)
+        
+        const_set(:DifferentResponder, Class.new)
+      end
+      
+      result1 = described_class.run(request, app_module)
+      result2 = described_class.run(request, another_module)
+      
+      expect(result1).not_to eq(result2)
     end
   end
 end

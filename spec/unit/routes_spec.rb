@@ -287,5 +287,33 @@ RSpec.describe FlashAPI::Routes do
         expect(paths.size).to be >= 8
       end
     end
+    
+    describe 'route compilation' do
+      it 'freezes paths after drawing routes' do
+        route_set.draw do
+          get '/test', to: 'TestController'
+        end
+        
+        expect(route_set.paths).to be_frozen
+      end
+      
+      it 'provides routes_for_path helper' do
+        route_set.draw do
+          get '/users', to: 'UsersGetController'
+          post '/users', to: 'UsersPostController'
+          put '/users', to: 'UsersPutController'
+          get '/posts', to: 'PostsController'
+        end
+        
+        user_routes = route_set.routes_for_path('/users')
+        expect(user_routes).to contain_exactly('GET /users', 'POST /users', 'PUT /users')
+        
+        post_routes = route_set.routes_for_path('/posts')
+        expect(post_routes).to contain_exactly('GET /posts')
+        
+        empty_routes = route_set.routes_for_path('/nonexistent')
+        expect(empty_routes).to be_empty
+      end
+    end
   end
 end

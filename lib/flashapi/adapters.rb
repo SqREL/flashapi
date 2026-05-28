@@ -64,7 +64,7 @@ module FlashAPI
       end
 
       def error_response(status, message)
-        body = Oj.dump({ status_code: status, success: false, error: message }, mode: :compat)
+        body = JsonSerializer.dump({ status_code: status, success: false, error: message })
         
         {
           status:,

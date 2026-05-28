@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 module FlashAPI
+  # Frozen string constants for performance
+  GET = 'get'
+  POST = 'post'
+  PUT = 'put'
+  DELETE = 'delete'
+  PATCH = 'patch'
+  APPLICATION_JSON = 'application/json'
+  
   # BaseRequest using Ruby 3.2+ Data class for immutable request representation
   BaseRequest = Data.define(
     :protocol,
@@ -21,17 +29,17 @@ module FlashAPI
     end
 
     # Helper methods for common checks
-    def get? = request_method&.downcase == 'get'
-    def post? = request_method&.downcase == 'post'
-    def put? = request_method&.downcase == 'put'
-    def delete? = request_method&.downcase == 'delete'
-    def patch? = request_method&.downcase == 'patch'
+    def get? = request_method&.downcase == GET
+    def post? = request_method&.downcase == POST
+    def put? = request_method&.downcase == PUT
+    def delete? = request_method&.downcase == DELETE
+    def patch? = request_method&.downcase == PATCH
 
     # Check if request has JSON content type
     def json?
       return false if content_type.nil? || content_type.empty?
       
-      content_type.downcase.include?('application/json')
+      content_type.downcase.include?(APPLICATION_JSON)
     end
 
     # Get a specific header value (case-insensitive)
@@ -57,7 +65,7 @@ module FlashAPI
       return {} unless json?
       return {} if post_content.nil? || post_content.empty?
       
-      Oj.load(post_content, symbol_keys: true)
+      JsonSerializer.load(post_content)
     rescue StandardError
       {}
     end

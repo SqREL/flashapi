@@ -7,6 +7,20 @@ module FlashAPI
   module Adapters
     # EventMachine adapter for high-performance async HTTP server
     class EventMachine < Base
+      # Frozen string constants for performance
+      CONTENT_TYPE = 'Content-Type'
+      APPLICATION_JSON = 'application/json'
+      COOKIE = 'Cookie'
+      CONTENT_LENGTH = 'Content-Length'
+      CONNECTION = 'Connection'
+      KEEP_ALIVE = 'keep-alive'
+      CLOSE = 'close'
+      HTTP_1_1 = 'HTTP/1.1 '
+      CRLF = "\r\n"
+      HEADER_SEPARATOR = ': '
+      COOKIE_SEPARATOR = ';'
+      COOKIE_VALUE_SEPARATOR = '='
+      SPACE = ' '
       DEFAULT_OPTIONS = {
         host: '0.0.0.0',
         port: 3000,
@@ -105,7 +119,7 @@ module FlashAPI
             protocol: 'http',
             request_method: parser.http_method,
             cookie: extract_cookies,
-            content_type: request_data[:headers]['Content-Type'],
+            content_type: request_data[:headers][CONTENT_TYPE],
             path_info: request_data[:path],
             uri: request_data[:path],
             query_string: request_data[:query_string],
@@ -115,38 +129,38 @@ module FlashAPI
         end
 
         def extract_cookies
-          cookie_header = request_data[:headers]['Cookie']
+          cookie_header = request_data[:headers][COOKIE]
           return {} unless cookie_header
 
-          cookie_header.split(';').each_with_object({}) do |cookie, hash|
-            key, value = cookie.strip.split('=', 2)
+          cookie_header.split(COOKIE_SEPARATOR).each_with_object({}) do |cookie, hash|
+            key, value = cookie.strip.split(COOKIE_VALUE_SEPARATOR, 2)
             hash[key] = value if key && value
           end
         end
 
         def send_response(response)
-          status_line = "HTTP/1.1 #{response[:status]} #{http_status_text(response[:status])}\r\n"
+          status_line = "#{HTTP_1_1}#{response[:status]} #{http_status_text(response[:status])}#{CRLF}"
           headers = build_response_headers(response[:headers], response[:body])
           
           send_data(status_line)
           send_data(headers)
-          send_data("\r\n")
+          send_data(CRLF)
           send_data(response[:body])
         end
 
         def build_response_headers(headers, body)
           headers = headers.dup
-          headers['Content-Length'] = body.bytesize.to_s
-          headers['Connection'] = keep_alive? ? 'keep-alive' : 'close'
+          headers[CONTENT_LENGTH] = body.bytesize.to_s
+          headers[CONNECTION] = keep_alive? ? KEEP_ALIVE : CLOSE
           
-          headers.map { |k, v| "#{k}: #{v}" }.join("\r\n")
+          headers.map { |k, v| "#{k}#{HEADER_SEPARATOR}#{v}" }.join(CRLF)
         end
 
         def send_error_response(status, message)
-          body = Oj.dump({ status_code: status, success: false, error: message }, mode: :compat)
+          body = JsonSerializer.dump({ status_code: status, success: false, error: message })
           response = {
             status:,
-            headers: { 'Content-Type' => 'application/json' },
+            headers: { CONTENT_TYPE => APPLICATION_JSON },
             body:
           }
           send_response(response)
@@ -155,8 +169,8 @@ module FlashAPI
         def keep_alive?
           return false unless parser.http_version == [1, 1]
           
-          connection_header = request_data[:headers]['Connection']&.downcase
-          connection_header != 'close'
+          connection_header = request_data[:headers][CONNECTION]&.downcase
+          connection_header != CLOSE
         end
 
         def http_status_text(status)

@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+# Include FlashAPI from parent directory
+gem 'flashapi', path: '..'
+
+# Frameworks to benchmark against
+gem 'sinatra', '~> 4.0'
+gem 'grape', '~> 2.0'
+gem 'rails', '~> 7.1', require: 'action_controller/railtie'
+
+# Required dependencies
+gem 'rack', '~> 3.0'
+gem 'puma', '~> 6.4'
+gem 'oj', '~> 3.16'
+
+# Benchmarking tools
+gem 'benchmark-ips', '~> 2.13'
+gem 'memory_profiler', '~> 1.0'
+gem 'derailed_benchmarks', '~> 2.1'

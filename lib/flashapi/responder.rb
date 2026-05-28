@@ -12,7 +12,7 @@ module FlashAPI
     def headers = render[:headers] || default_headers
 
     def body
-      Oj.dump(build_response_body, mode: :compat)
+      JsonSerializer.dump(build_response_body)
     end
 
     # Render method to be implemented by including class

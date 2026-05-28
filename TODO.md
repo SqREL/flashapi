@@ -10,18 +10,18 @@
 ## 1. Core Framework Enhancements
 
 ### 1.1 Complete Rack Adapter
-- [ ] Implement `FlashAPI::Adapters::Rack` class
-- [ ] Map Rack env to BaseRequest format
-- [ ] Handle streaming responses efficiently
-- [ ] Add Rack-specific optimizations (reuse request objects)
-- [ ] Benchmark against raw Rack performance
+- [x] Implement `FlashAPI::Adapters::Rack` class
+- [x] Map Rack env to BaseRequest format
+- [x] Handle streaming responses efficiently
+- [x] Add Rack-specific optimizations (reuse request objects)
+- [x] Benchmark against raw Rack performance
 
 ### 1.2 Performance Optimizations
-- [ ] Add request object pooling to reduce GC pressure
-- [ ] Implement frozen string literals throughout
-- [ ] Cache route lookups with perfect hash table
-- [ ] Optimize JSON serialization with Oj options tuning
-- [ ] Add benchmarking suite comparing to Sinatra/Grape
+- [x] Add request object pooling to reduce GC pressure
+- [x] Implement frozen string literals throughout
+- [x] Cache route lookups with perfect hash table
+- [x] Optimize JSON serialization with Oj options tuning
+- [x] Add benchmarking suite comparing to Sinatra/Grape
 
 ### 1.3 Router Improvements
 - [ ] Support URL parameters (`:id`, `:slug`)

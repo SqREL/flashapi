@@ -1,9 +1,221 @@
-/.bundle/
-/.yardoc
-/Gemfile.lock
-/_yardoc/
+# Ruby and Bundler
+*.gem
+*.rbc
+/.config
 /coverage/
-/doc/
+/InstalledFiles
 /pkg/
 /spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
 /tmp/
+
+# Bundler
+/.bundle/
+/vendor/bundle
+/lib/bundler/man/
+Gemfile.lock
+.ruby-version
+.ruby-gemset
+.rvmrc
+
+# Documentation
+/.yardoc
+/_yardoc/
+/doc/
+/rdoc/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+## RubyMine
+.idea/
+*.iml
+*.ipr
+*.iws
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+
+## Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+## Vim
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+tags
+Session.vim
+.netrwhist
+
+## Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+## TextMate
+*.tmproj
+*.tmproject
+tmtags
+
+# OS files
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+## Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# Logs and databases
+*.log
+/log/*
+!/log/.keep
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+
+# Testing
+/spec/tmp/
+/spec/fixtures/tmp/
+/test/fixtures/tmp/
+.rspec_status
+
+# Benchmarking temporary files
+/benchmark/tmp/
+/benchmark/results/
+*.bench
+
+# Profiling
+*.prof
+*.profile
+/profiles/
+
+# Build artifacts
+/build/
+/dist/
+/_build/
+/out/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+*.pid
+*.seed
+*.pid.lock
+
+# Security and credentials
+*.pem
+*.key
+*.crt
+*.p12
+/config/secrets.yml
+/config/credentials.yml.enc
+/config/master.key
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Archives
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.7z
+*.rar
+
+# Compiled files
+*.o
+*.so
+*.dylib
+*.dll
+*.class
+*.exe
+
+# Ruby specific
+/.rbx/
+.rbenv-gemsets
+/.watchr
+.powder
+
+# Byebug
+.byebug_history
+
+# Spring
+/spring/*.pid
+
+# Reek
+.reek
+
+# RuboCop
+.rubocop-*
+
+# Development specific
+/sandbox/
+/experiments/
+/scratch/
+
+# Benchmark results (but keep benchmark scripts)
+/benchmark/*.log
+/benchmark/*.txt
+/benchmark/*.csv
+/benchmark/*.json
+!/benchmark/*.rb
+
+# Keep important files
+!.gitignore
+!.gitkeep
+!.rubocop.yml
+!.rspec
+!/.github/
